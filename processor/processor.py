@@ -1,21 +1,20 @@
 import logging
 import os
+from re import A
 import time
+
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+from torch.cuda import amp
 from utils.meter import AverageMeter
 from utils.metrics import R1_mAP_eval
-from torch.cuda import amp
-import torchvision
-import torch.nn.functional as F
 
-import numpy as np
-import math
-import random
-
+from .writer import Writer
 
 def do_train(cfg, model, center_criterion, train_loader, val_loader, optimizer,
              optimizer_center, scheduler, loss_fn, num_query, local_rank):
+    writer = Writer()
     log_period = cfg.SOLVER.LOG_PERIOD
     checkpoint_period = cfg.SOLVER.CHECKPOINT_PERIOD
     eval_period = cfg.SOLVER.EVAL_PERIOD
@@ -147,6 +146,7 @@ def do_train(cfg, model, center_criterion, train_loader, val_loader, optimizer,
                     .format(epoch, (n_iter + 1), len(train_loader),
                             loss_meter.avg, acc_meter.avg,
                             optimizer.state_dict()['param_groups'][0]['lr']))
+                writer.write('Train', Epoch=epoch,Self_ID_Loss=self_id_loss ,Loss=loss_meter.avg, Acc=acc_meter.avg, BaseLr=optimizer.state_dict()['param_groups'][0]['lr'])
 
         end_time = time.time()
         time_per_batch = (end_time - start_time) / (n_iter + 1)
@@ -172,6 +172,7 @@ def do_train(cfg, model, center_criterion, train_loader, val_loader, optimizer,
             logger.info("mAP: {:.1%}".format(mAP))
             for r in [1, 5, 10]:
                 logger.info("CMC curve, Rank-{:<3}:{:.1%}".format(r, cmc[r - 1]))
+            writer.write('Eval', mAP=mAP, CMC1=cmc[0], CMC5=cmc[4], CMC10=cmc[9])
             torch.cuda.empty_cache()
 
 

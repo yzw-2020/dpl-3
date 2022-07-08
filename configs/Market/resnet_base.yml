@@ -1,6 +1,6 @@
 MODEL:
   PRETRAIN_CHOICE: 'imagenet'
-  PRETRAIN_PATH: '/home/wangzhiqiang/.cache/torch/hub/checkpoints/resnet50-19c8e357.pth'
+  PRETRAIN_PATH: '/home/pyt-dep/Desktop/cache/resnet50-0676ba61.pth'
   METRIC_LOSS_TYPE: 'triplet'
   NAME: 'resnet50'
   NO_MARGIN: True
@@ -33,12 +33,12 @@ INPUT:
 
 DATASETS:
   NAMES: ('market1501')
-  ROOT_DIR: ('/home/chenminghui/data/ReID_Dataset/')
+  ROOT_DIR: ('/home/pyt-dep/Desktop')
 
 DATALOADER:
   SAMPLER: 'softmax_triplet'
-  NUM_INSTANCE: 4
-  NUM_WORKERS: 8
+  NUM_INSTANCE: 8
+  NUM_WORKERS: 12
 
 SOLVER:
   OPTIMIZER_NAME: 'SGD'
@@ -47,9 +47,9 @@ SOLVER:
   IMS_PER_BATCH: 64
   WARMUP_METHOD: 'linear'
   LARGE_FC_LR: False
-  CHECKPOINT_PERIOD: 120
-  LOG_PERIOD: 50
-  EVAL_PERIOD: 120
+  CHECKPOINT_PERIOD: 10
+  LOG_PERIOD: 10
+  EVAL_PERIOD: 10
   WEIGHT_DECAY:  1e-4
   WEIGHT_DECAY_BIAS: 1e-4
   BIAS_LR_FACTOR: 2
@@ -62,6 +62,6 @@ TEST:
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: './logs/market_resnet_base'
+OUTPUT_DIR: ('./logs/market1501')
 
 

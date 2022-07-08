@@ -38,8 +38,8 @@ def rain(image, severity=1):
                                                 blur_value=blur_value,
                                                 brightness_coefficient=1,
                                                 always_apply=True),
-        abm.augmentations.transforms.RandomBrightness(
-            limit=[bright_value, bright_value], always_apply=True)
+        abm.augmentations.transforms.RandomBrightnessContrast(
+            brightness_limit=[bright_value, bright_value], always_apply=True)
     ])
     width, height = image.size
     if height <= 60:

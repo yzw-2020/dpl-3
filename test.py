@@ -1,10 +1,12 @@
 import os
+from time import time
 from config import cfg
 import argparse
 from datasets import make_dataloader
 from model import make_model
 from processor import do_inference
 from utils.logger import setup_logger
+from processor.writer import Writer
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ReID Baseline Training")
@@ -53,10 +55,12 @@ if __name__ == "__main__":
                        num_class=num_classes,
                        camera_num=camera_num,
                        view_num=view_num)
-    model.load_param(cfg.TEST.WEIGHT)
 
 
-    for eval_epoch in range(10):
+    writers = [Writer(f'runs_test/{time()}_CleanEval'), Writer(f'runs_test/{time()}_CorruptedEval'),
+                Writer(f'runs_test/{time()}_CorruptedQuery'), Writer(f'runs_test/{time()}_CorruptedGallery')]
+    for eval_epoch in range(12):
+        model.load_param(f'{cfg.TEST.WEIGHT}/resnet50_{(eval_epoch+1)*10}.pth')
         print("Eval epoch ", eval_epoch)
         print("=" * 64)
         loader_list = [
@@ -71,6 +75,8 @@ if __name__ == "__main__":
             print("Evaluating on ", name[loader_i])
             mINP, mAP, rank1, rank5, rank10 = do_inference(
                 cfg, model, loader_list[loader_i], num_query)
+            writer = writers[loader_i]
+            writer.write('Test', mINP=mINP, mAP=mAP, CMC1=rank1, CMC5=rank5, CMC10=rank10)
             mINP = round(mINP * 100, 2)
             mAP = round(mAP * 100, 2)
             rank1 = round(rank1 * 100, 2)
@@ -82,3 +88,4 @@ if __name__ == "__main__":
                 csv_write = csv.writer(f)
                 data_row = [mINP, mAP, rank1, rank5, rank10]
                 csv_write.writerow(data_row)
+    del writers

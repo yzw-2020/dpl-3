@@ -2,7 +2,18 @@
 python train.py \
 --config_file configs/Market/resnet_base.yml \
 MODEL.DEVICE_ID "('0')" \
-OUTPUT_DIR "('./logs/market')" INPUT.AUGMIX "(True)" \
+OUTPUT_DIR "('./logs/market1501')" \
+INPUT.AUGMIX "(True)" \
 INPUT.ERASING_TYPE "('soft')" \
 INPUT.RE_PROB "(0.5)" \
 INPUT.MIXING_COEFF "([0.5, 1.0])"
+
+python train.py \
+--config_file configs/Market/resnet_base.yml \
+MODEL.DEVICE_ID "('0')" \
+OUTPUT_DIR "('./logs/market1501_Adam')" \
+INPUT.AUGMIX "(True)" \
+INPUT.ERASING_TYPE "('soft')" \
+INPUT.RE_PROB "(0.5)" \
+INPUT.MIXING_COEFF "([0.5, 1.0])" \
+SOLVER.OPTIMIZER_NAME "('Adam')"
